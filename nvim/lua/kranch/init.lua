@@ -1,0 +1,8 @@
+require('kranch/telescope')
+require('kranch/lightline')
+require('kranch/gitsigns')
+require('kranch/autopairs')
+require('kranch/lsp')
+require('kranch/lspsaga')
+require('kranch/treesitter')
+require('kranch/lualine')

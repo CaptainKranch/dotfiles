@@ -1,173 +1,113 @@
-" Plug-vim """{{{
+" Pluggins """{{{
 " ---------------------------------------------------------------------
-if has ('nvim')
-  let g:plug_home = stdpath('data') . '/plugged'
-endif
 
 call plug#begin('~/AppData/Local/nvim/plugged')
 
-
-Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
+
 Plug 'cohama/lexima.vim'
 
 if has("nvim")
+
+    Plug 'dracula/vim', { 'as': 'dracula' } "Theme
+
+    Plug 'nvim-lua/plenary.nvim' "Telescope requires plenary to function
+
+    Plug 'nvim-telescope/telescope.nvim' "The main Telescope plugin
+
+    Plug 'nvim-telescope/telescope-fzf-native.nvim', {'do': 'make' } "An optional plugin recommended by Telescope docs
+
+    Plug 'itchyny/lightline.vim' "A beautiful lightbar
+
+    Plug 'tpope/vim-fugitive' "Git inside vim
+
+    Plug 'lewis6991/gitsigns.nvim' "Modified git file inside vim
+
+    Plug 'neovim/nvim-lspconfig' "lsp server for python and type script.
+
+    Plug 'glepnir/lspsaga.nvim'
+
+    Plug 'windwp/nvim-autopairs'
+
+    "Plug 'numirias/semshi', { 'do': ':UpdateRemotePlugins' } "Python syntax
+    
+    Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
+
+    Plug 'kyazdani42/nvim-web-devicons'
+
     Plug 'hoob3rt/lualine.nvim'
-  Plug 'kristijanhusak/defx-git'
-  Plug 'kristijanhusak/defx-icons'
-  Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'neovim/nvim-lspconfig'
-  Plug 'tami5/lspsaga.nvim', { 'branch': 'nvim51' }
-  Plug 'folke/lsp-colors.nvim'
-  Plug 'L3MON4D3/LuaSnip'
-  Plug 'hrsh7th/cmp-nvim-lsp'
-  Plug 'hrsh7th/cmp-buffer'
-  Plug 'hrsh7th/nvim-cmp'
-  Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
-  Plug 'kyazdani42/nvim-web-devicons'
-  Plug 'onsails/lspkind-nvim'
-  Plug 'nvim-lua/popup.nvim'
-  Plug 'nvim-lua/plenary.nvim'
-  Plug 'nvim-telescope/telescope.nvim'
-  Plug 'windwp/nvim-autopairs'
+
 endif
 
-Plug 'groenewege/vim-less', { 'for': 'less' }
-Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
+call plug#end()
 
-call plug#end() 
+
+lua require('kranch/init')
+
 
 "}}}
-
 
 " Fundamentals "{{{
 " ---------------------------------------------------------------------
 
-" init autocmd
-autocmd!
-" set script encoding
-scriptencoding utf-8
-" stop loading config if it's on tiny or small
-if !1 | finish | endif
-
-set nocompatible
-set mouse=a
-set number
-syntax enable
-set fileencodings=utf-8,sjis,euc-jp,latin
-set encoding=utf-8
-set title
-set autoindent
-set background=dark
-set nobackup
 set hlsearch
 set showcmd
-set cmdheight=1
-set laststatus=2
-set scrolloff=10
+
+
+" enables syntax highlighting
+syntax on
+
+" Better colors
+set termguicolors
+
+" number of spaces in a <Tab>
+set tabstop=4
+set softtabstop=4
 set expandtab
-"let loaded_matchparen = 1
-set backupskip=/tmp/*,/private/tmp/*
 
-set clipboard+=unnamed  " use the clipboards of vim and win
-set paste               " Paste from a windows or from vim
-set go+=a               " Visual selection automatically copied to the clipboard
+" enable autoindents
+set smartindent
 
-" incremental substitution (neovim)
-if has('nvim')
-  set inccommand=split
-endif
+" number of spaces used for autoindents
+set shiftwidth=4
 
-" Suppress appending <PasteStart> and <PasteEnd> when pasting
-set t_BE=
+" adds line numbers
+set number
 
-set nosc noru nosm
-" Don't redraw while executing macros (good performance config)
-set lazyredraw
-"set showmatch
-" How many tenths of a second to blink when matching brackets
-"set mat=2
-" Ignore case when searching
+" columns used for the line number
+set numberwidth=4
+
+" highlights the matched text pattern when searching
+set incsearch
+set nohlsearch
+
+" open splits intuitively
+set splitbelow
+set splitright
+
+" navigate buffers without losing unsaved work
+set hidden
+
+" start scrolling when 8 lines from top or bottom
+set scrolloff=8
+
+" Save undo history
+set undofile
+
+" Enable mouse support
+set mouse=a
+
+" case insensitive search unless capital letters are used
 set ignorecase
-" Be smart when using tabs ;)
-set smarttab
-" indents
-filetype plugin indent on
-set shiftwidth=2
-set tabstop=2
-set ai "Auto indent
-set si "Smart indent
-set nowrap "No Wrap lines
-set backspace=start,eol,indent
-" Finding files - Search down into subfolders
-set path+=**
-set wildignore+=*/node_modules/*
+set smartcase
 
-" Turn off paste mode when leaving insert
-autocmd InsertLeave * set nopaste
+set noshowmode
+
+set signcolumn=number
 
 " Add asterisks in block comments
 set formatoptions+=r
 
-"}}}
-
-" Highlights "{{{
-" ---------------------------------------------------------------------
-set cursorline
-"set cursorcolumn
-
-" Set cursor line color on visual mode
-highlight Visual cterm=NONE ctermbg=236 ctermfg=NONE guibg=Grey40
-
-highlight LineNr cterm=none ctermfg=240 guifg=#2b506e guibg=#000000
-
-augroup BgHighlight
-  autocmd!
-  autocmd WinEnter * set cul
-  autocmd WinLeave * set nocul
-augroup END
-
-if &term =~ "screen"
-  autocmd BufEnter * if bufname("") !~ "^?[A-Za-z0-9?]*://" | silent! exe '!echo -n "\ek[`hostname`:`basename $PWD`/`basename %`]\e\\"' | endif
-  autocmd VimLeave * silent!  exe '!echo -n "\ek[`hostname`:`basename $PWD`]\e\\"'
-endif
-
-"}}}
-
-" File types "{{{
-" ---------------------------------------------------------------------
-" JavaScript
-au BufNewFile,BufRead *.es6 setf javascript
-" TypeScript
-au BufNewFile,BufRead *.tsx setf typescriptreact
-" Markdown
-au BufNewFile,BufRead *.md set filetype=markdown
-au BufNewFile,BufRead *.mdx set filetype=markdown
-" Flow
-au BufNewFile,BufRead *.flow set filetype=javascript
-" Fish
-au BufNewFile,BufRead *.fish set filetype=fish
-
-set suffixesadd=.js,.es,.jsx,.json,.css,.less,.sass,.styl,.php,.py,.md
-
-autocmd FileType coffee setlocal shiftwidth=2 tabstop=2
-autocmd FileType ruby setlocal shiftwidth=2 tabstop=2
-autocmd FileType yaml setlocal shiftwidth=2 tabstop=2
-
-"}}}
-
-" Imports "{{{
-" ---------------------------------------------------------------------
-runtime ./plug.vim
-if has("unix")
-  let s:uname = system("uname -s")
-  " Do Mac stuff
-  if s:uname == "Darwin\n"
-    runtime ./macos.vim
-  endif
-endif
-
-runtime ./maps.vim
 "}}}
 
 " Syntax theme "{{{
@@ -180,43 +120,38 @@ if exists("&termguicolors") && exists("&winblend")
   set winblend=0
   set wildoptions=pum
   set pumblend=5
-  set background=dark
+  "set background=dark
+
   " Use NeoSolarized
+
   let g:neosolarized_termtrans=1
-  runtime ./colors/NeoSolarized.vim
-  colorscheme NeoSolarized
+  runtime ./colors/deepsea.vim
+  colorscheme dracula
+  hi Normal guibg=NONE ctermbg=NONE
+  hi LineNr guibg=NONE ctermbg=NONE
+  hi SignColumn guibg=NONE ctermbg=NONE
+  hi EndOfBuffer guibg=NONE ctermbg=NONE
 endif
 
 "}}}
 
-" Extras "{{{
+" mapping "{{{
 " ---------------------------------------------------------------------
-set exrc
 
-let g:airline#extensions#tabline#enabled = 1	"muestra la linea de pestaña en la que estamos buffer
-let g:airline#extensions#tabline#formatter = 'unique_tail'	"muestra solo el nombre del archivo que estamos modificando
-let g:airline_theme='onedark'	"el tema de airline
+" Telescope
+nnoremap  <silent> ;f <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap  <silent> ;r <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap  <silent> ;b <cmd>lua require('telescope.builtin').file_browser()<cr>
+nnoremap <silent> \\ <cmd>Telescope buffers<cr>
+nnoremap <silent> ;; <cmd>Telescope help_tags<cr>
 
-" shift+arrow selection
-nmap <S-Up> v<Up>
-nmap <S-Down> v<Down>
-nmap <S-Left> v<Left>
-nmap <S-Right> v<Right>
-vmap <S-Up> <Up>
-vmap <S-Down> <Down>
-vmap <S-Left> <Left>
-vmap <S-Right> <Right>
-imap <S-Up> <Esc>v<Up>
-imap <S-Down> <Esc>v<Down>
-imap <S-Left> <Esc>v<Left>
-imap <S-Right> <Esc>v<Right>
+"LSPsaga
 
-vmap <C-c> y<Esc>i
-vmap <C-x> d<Esc>i
-map <C-v> pi
-imap <C-v> <Esc>pi
-imap <C-z> <Esc>ui
+nnoremap <silent> <C-j> :Lspsaga diagnostic_jump_next<CR>
+nnoremap <silent> K <cmd>lua require('lspsaga.hover').render_hover_doc()<CR>
+nnoremap <silent> gh :Lspsaga lsp_finder<CR>
+nnoremap <silent> gp :Lspsaga preview_definition<CR>
 
 "}}}
 
-" vim: set foldmethod=marker foldlevel=0:
+

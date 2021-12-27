@@ -1,12 +1,3 @@
-if !exists('g:lspconfig')
-  finish
-endif
-
-lua << EOF
---vim.lsp.set_log_level("debug")
-EOF
-
-lua << EOF
 local nvim_lsp = require('lspconfig')
 local protocol = require'vim.lsp.protocol'
 
@@ -15,9 +6,6 @@ local protocol = require'vim.lsp.protocol'
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-
-  --Enable completion triggered by <c-x><c-o>
-  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   -- Mappings.
   local opts = { noremap=true, silent=true }
@@ -82,12 +70,6 @@ local on_attach = function(client, bufnr)
     '', -- TypeParameter
   }
 end
-
-
--- Set up completion using nvim_cmp with LSP source
-local capabilities = require('cmp_nvim_lsp').update_capabilities(
-  vim.lsp.protocol.make_client_capabilities()
-)
 
 nvim_lsp.flow.setup {
   on_attach = on_attach,
@@ -172,5 +154,3 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     }
   }
 )
-
-EOF
